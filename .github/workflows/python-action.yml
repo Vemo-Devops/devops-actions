@@ -20,12 +20,16 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Convert repository name to lowercase
+        id: repo-name-lowercase
+        run: echo "REPO_NAME_LOWERCASE=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}/${{ inputs.image_name }}:latest
+          tags: ghcr.io/${{ env.REPO_NAME_LOWERCASE }}/${{ inputs.image_name }}:latest
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
@@ -54,4 +58,4 @@ jobs:
       - name: Deploy to AKS
         run: |
           kubectl create namespace my-app-ns || true  # Ensure the namespace exists
-          kubectl set image deployment/my-app-deployment my-app=ghcr.io/${{ github.repository }}/${{ inputs.image_name }}:latest -n my-app-ns
+          kubectl set image deployment/my-app-deployment my-app=ghcr.io/${{ env.REPO_NAME_LOWERCASE }}/${{ inputs.image_name }}:latest -n my-app-ns
