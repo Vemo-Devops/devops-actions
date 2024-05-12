@@ -10,7 +10,7 @@ on:
     secrets:
       GH_USER:
         required: true
-      GHCR_TOKEN:
+      GHCR_PAT:
         required: true
       AZURE_TOKEN:
         required: true
@@ -35,7 +35,7 @@ jobs:
         with:
           registry: docker.io
           username: ${{ secrets.GH_USER }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          password: ${{ secrets.GHCR_PAT }}
 
       - name: Build and push Docker image to Docker Hub
         uses: docker/build-push-action@v3
