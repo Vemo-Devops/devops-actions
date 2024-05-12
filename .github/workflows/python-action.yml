@@ -24,19 +24,19 @@ jobs:
         id: repo-name-lowercase
         run: echo "REPO_NAME_LOWERCASE=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          tags: ghcr.io/${{ env.REPO_NAME_LOWERCASE }}/${{ inputs.image_name }}:latest
-
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ secrets.GH_USERNAME }}
           password: ${{ secrets.GHR_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ env.REPO_NAME_LOWERCASE }}/${{ inputs.image_name }}:latest
 
   deploy-to-aks:
     needs: build-and-push-image
